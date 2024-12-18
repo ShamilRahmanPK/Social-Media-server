@@ -15,7 +15,7 @@ exports.registerController = async (req,res)=>{
 
         } else {
             const newUser = new users({
-                firstname,lastname,username,email,password,profilePic:""
+                firstname,lastname,username,email,password,profilePic:"",userBio:"Feeling Good.."
             })
             await newUser.save()
             res.status(200).json(newUser)
@@ -50,3 +50,16 @@ exports.loginController = async (req,res)=>{
 }
 
 // profile updation
+
+
+// viewHomeProfile
+
+exports.getHomeUserProfile = async (req,res) => {
+    console.log("getHomeUserProfile");
+    try {
+        const allHomeUserProfile = await users.find().limit(6)
+        res.status(200).json(allHomeUserProfile)
+    } catch (err) {
+        res.status(401).json(err)
+    }
+}
