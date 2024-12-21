@@ -27,16 +27,18 @@ exports.addPostController = async (req,res) => {
 }
 
 // get home project
-exports.getHomeProjectsController = async (req,res)=>{
+exports.getHomeProjectsController = async (req, res) => {
     console.log("getHomeProjectsController");
-    
+
     try {
-        const allHomeProjects = await posts.find().limit(6)
-        res.status(200).json(allHomeProjects)
+        const allHomeProjects = await posts.find().sort({ _id: -1 }).limit(6);
+        res.status(200).json(allHomeProjects);
     } catch (err) {
-        res.status(401).json(err)
+        res.status(401).json(err);
     }
-}
+};
+
+
 
 // get all user projects -auth user
 exports.getUserProjectsController = async (req,res)=>{
