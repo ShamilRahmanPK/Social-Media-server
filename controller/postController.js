@@ -4,8 +4,8 @@ const posts = require('../models/postModel')
 exports.addPostController = async (req,res) => {
     console.log("addPostController");
     const userId = req.userId
-    // console.log(userId);
-    // console.log(req.body);
+    // console.log(userId)
+    // console.log(req.body)
     // console.log(req.file)
     const {postname,description} = req.body
     const imageUrl = req.file.filename
@@ -76,5 +76,61 @@ exports.getSingleProjectController = async (req, res) => {
       res.status(500).json("Internal server error");
     }
 }
+
+// get another user posts
+exports.getAnotherUserPosts = async (req,res) => {
+    console.log("getAnotherUserPosts");
+    try {
+        const {userId} = req.params
+        const result = await posts.find({userId})
+        if (result) {
+            res.status(200).json(result)
+        }else{
+            res.status(404).json("No Posts")
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json("error while fetching")
+    }
+}
+
+// edit post 
+exports.editPostController = async (req, res) => {
+    console.log("Inside editPostController");
+    const { id } = req.params;
+    // console.log("Post ID:", id);
+    const { postname, description, imageUrl, userId } = req.body;
+  
+    try {
+      const updatedPost = await posts.findByIdAndUpdate(
+        id,
+        { postname, description, imageUrl, userId },
+        { new: true}
+      );
+  
+      if (!updatedPost) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+  
+      res.status(200).json(updatedPost); 
+    } catch (err) {
+      console.error("Error updating post:", err);
+      res.status(500).json({ message: 'Internal server error', error: err.message });
+    }
+  };
+
+//   delete post
+exports.deletePostController = async (req,res) => {
+    console.log("deletePostController");
+    const { id } = req.params;
+    try {
+        const removedPost = await posts.findByIdAndDelete({_id:id})
+        res.status(200).json(removedPost)
+    } catch (err) {
+        res.status(401).json(err)
+    }
+}
+  
+  
 
   

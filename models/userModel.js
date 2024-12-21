@@ -27,7 +27,11 @@ const userSchema = new mongoose.Schema({
     },
     userBio:{
         type:String,
-    }
+    },
+    userId:{
+        type:String,
+    },
+    
 })
 
 const users = mongoose.model("users",userSchema)

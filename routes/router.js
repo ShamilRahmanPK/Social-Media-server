@@ -31,5 +31,19 @@ router.get('/post/:id', jwtMiddleware, postController.getSingleProjectController
 // Home users
 router.get('/home-users',userController.getHomeUserProfile);
 
+// Fetch single user by userId
+router.get('/user/:userId', jwtMiddleware, userController.getSingleUserController);
+
+// fetch another user posts by userId
+router.get('/user/posts/:userId', jwtMiddleware, postController.getAnotherUserPosts);
+
+// edit profie
+router.put('/user/edit',jwtMiddleware,multerMiddleware.single("profilePic"),userController.editUserController);
+
+// edit post
+router.put('/post/:id/edit', jwtMiddleware,multerMiddleware.single("imageUrl") ,postController.editPostController);
+
+// delete post 
+router.delete('/post/:id/delete', jwtMiddleware,postController.deletePostController);
 
 module.exports = router
