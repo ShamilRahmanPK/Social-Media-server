@@ -46,4 +46,7 @@ router.put('/post/:id/edit', jwtMiddleware,multerMiddleware.single("imageUrl") ,
 // delete post 
 router.delete('/post/:id/delete', jwtMiddleware,postController.deletePostController);
 
+// all users - get
+router.get('/all-user',jwtMiddleware,userController.getAllUserController)
+
 module.exports = router

@@ -47,8 +47,6 @@ exports.registerController = async (req,res)=>{
 //         res.status(401).json('request recieved')
 //     }
 // }
-
-
 exports.loginController = async (req, res) => {
   console.log('loginController');
   const { email, password } = req.body;
@@ -74,8 +72,6 @@ exports.loginController = async (req, res) => {
     res.status(500).json('Internal server error');
   }
 };
-
-
 
 
 // profile updation
@@ -133,5 +129,16 @@ exports.getSingleUserController = async (req, res) => {
     } catch (err) {
       console.error(err);
       res.status(500).json("Internal server error")
+    }
+}
+
+// get all users
+exports.getAllUserController = async (req,res) => {
+  console.log("inside getAllUserController");
+    try {
+        const allUser = await users.find()
+        res.status(200).json(allUser)
+    } catch (err) {
+        res.status(401).json(err)
     }
 }
