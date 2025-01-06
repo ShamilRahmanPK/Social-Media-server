@@ -1,4 +1,8 @@
 const posts = require('../models/postModel')
+const fs = require("fs");
+const fetch = require('node-fetch');
+const path = require('path')
+require("dotenv").config();
 
 // add post
 exports.addPostController = async (req,res) => {
@@ -132,7 +136,49 @@ exports.deletePostController = async (req,res) => {
         res.status(401).json(err)
     }
 }
-  
-  
 
-  
+// get post text 
+exports.generateDescription = async (req, res) => {
+    try {
+        console.log("Uploaded file path:", req.file.path);
+        console.log("Uploaded file:", req.file);
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No image provided" });
+        }
+
+        const absoluteFilePath = path.resolve(req.file.path);
+
+        // Call Hugging Face API
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base",
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
+                },
+                body: fs.createReadStream(absoluteFilePath),
+            }
+        );
+
+        const data = await response.json();
+
+        // Check if the response contains valid data
+        if (response.ok && Array.isArray(data) && data.length > 0 && data[0].generated_text) {
+            const caption = data[0].generated_text;
+            return res.status(200).json({
+                title: caption,
+                description: `This image likely represents: ${caption}`,
+            });
+        } else {
+            // Handle cases where the response does not contain valid captions
+            return res.status(500).json({
+                message: "Failed to generate description",
+                data,
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};

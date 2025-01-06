@@ -3,6 +3,7 @@ const userController = require('../controller/userController')
 const postController = require('../controller/postController')
 const jwtMiddleware = require('../middleware/jwtMiddleware')
 const multerMiddleware = require('../middleware/multerMiddleware')
+const multer = require("multer");
 
 const router = new express.Router()
 
@@ -48,5 +49,10 @@ router.delete('/post/:id/delete', jwtMiddleware,postController.deletePostControl
 
 // all users - get
 router.get('/all-user',jwtMiddleware,userController.getAllUserController)
+
+// text generate
+
+// Route for generating description
+router.post("/generate-description",multerMiddleware.single("image"),postController.generateDescription);
 
 module.exports = router
