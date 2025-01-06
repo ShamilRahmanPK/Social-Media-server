@@ -149,7 +149,7 @@ exports.generateDescription = async (req, res) => {
 
         const absoluteFilePath = path.resolve(req.file.path);
 
-        // Call Hugging Face API
+        // Hugging Face API
         const response = await fetch(
             "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base",
             {
@@ -162,8 +162,6 @@ exports.generateDescription = async (req, res) => {
         );
 
         const data = await response.json();
-
-        // Check if the response contains valid data
         if (response.ok && Array.isArray(data) && data.length > 0 && data[0].generated_text) {
             const caption = data[0].generated_text;
             return res.status(200).json({
@@ -171,7 +169,6 @@ exports.generateDescription = async (req, res) => {
                 description: `This image likely represents: ${caption}`,
             });
         } else {
-            // Handle cases where the response does not contain valid captions
             return res.status(500).json({
                 message: "Failed to generate description",
                 data,
