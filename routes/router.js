@@ -18,16 +18,16 @@ router.post('/login',userController.loginController)
 router.post('/add-post',jwtMiddleware,multerMiddleware.single("imageUrl"),postController.addPostController)
 
 // home posts - get
-router.get('/home-posts',postController.getHomeProjectsController)
+router.get('/home-posts',postController.getHomePostController)
 
 // user posts - get
-router.get('/user-posts',jwtMiddleware,postController.getUserProjectsController)
+router.get('/user-posts',jwtMiddleware,postController.getUserPostController)
 
 // all posts - get
-router.get('/all-posts',jwtMiddleware,postController.getAllProjectsController)
+router.get('/all-posts',jwtMiddleware,postController.getAllPostController)
 
 // Fetch single post by ID
-router.get('/post/:id', jwtMiddleware, postController.getSingleProjectController);
+router.get('/post/:id', jwtMiddleware, postController.getSinglePostController);
 
 // Home users
 router.get('/home-users',userController.getHomeUserProfile);
@@ -54,5 +54,26 @@ router.get('/all-user',jwtMiddleware,userController.getAllUserController)
 
 // Route for generating description
 router.post("/generate-description",multerMiddleware.single("image"),postController.generateDescription);
+
+// admin 
+
+// get all post for approval
+router.get('/admin/all-post-approval',postController.getAllPostApprovalController)
+
+// Fetch single user by userId
+router.get('/admin-post-view/:id',postController.getAdminSinglePostController);
+
+// approve post by id
+// Approve a post
+router.patch('/approve-post/:id', postController.approvePostController);
+
+// delete post 
+router.delete('/admin/:id/delete',postController.adminDeletePostController);
+
+// get all post for admin
+router.get('/admin/all-post',postController.adminGetAllPostController)
+
+// get all user for admin
+router.get('/admin/all-user',userController.getAllUserController)
 
 module.exports = router

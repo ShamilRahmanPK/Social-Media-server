@@ -142,3 +142,6 @@ exports.getAllUserController = async (req,res) => {
         res.status(401).json(err)
     }
 }
+
+// for admin
+

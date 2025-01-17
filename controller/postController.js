@@ -20,7 +20,7 @@ exports.addPostController = async (req,res) => {
             res.status(406).json("Post already exisit")
         }else{
             const newPost = new posts({
-                postname,description,imageUrl,userId
+                postname,description,imageUrl,userId,isValidate:false
             })
             await newPost.save()
             res.status(200).json(newPost)
@@ -31,11 +31,11 @@ exports.addPostController = async (req,res) => {
 }
 
 // get home project
-exports.getHomeProjectsController = async (req, res) => {
+exports.getHomePostController = async (req, res) => {
     console.log("getHomeProjectsController");
 
     try {
-        const allHomeProjects = await posts.find().sort({ _id: -1 }).limit(6);
+        const allHomeProjects = await posts.find({ isValidate: true }).sort({ _id: -1 }).limit(6);
         res.status(200).json(allHomeProjects);
     } catch (err) {
         res.status(401).json(err);
@@ -43,9 +43,8 @@ exports.getHomeProjectsController = async (req, res) => {
 };
 
 
-
 // get all user projects -auth user
-exports.getUserProjectsController = async (req,res)=>{
+exports.getUserPostController = async (req,res)=>{
     console.log("getUserProjectsController");
     try {
         userId = req.userId
@@ -56,19 +55,20 @@ exports.getUserProjectsController = async (req,res)=>{
     }
 }
 
-// get all projects -auth user
-exports.getAllProjectsController = async (req,res)=>{
-    console.log("getAllProjectsController");
+// Get all projects - auth user
+exports.getAllPostController = async (req,res) => {
+    console.log("inside getAllPostController");
     try {
-        const allProjects = await posts.find()
-        res.status(200).json(allProjects)
+        const result = await posts.find({ isValidate: true }).sort({_id:-1})
+        console.log("All Posts:", result);
+        res.status(200).json(result)
     } catch (err) {
-        res.status(401).json(err)
+        res.status(401).json(err);
     }
 }
 
 // get single user project by ID
-exports.getSingleProjectController = async (req, res) => {
+exports.getSinglePostController = async (req, res) => {
     console.log("getSingleProjectController");
     try {
       const { id } = req.params;
@@ -179,3 +179,81 @@ exports.generateDescription = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
+
+
+
+// for admin
+
+// get all projects for approval
+exports.getAllPostApprovalController = async (req,res)=>{
+    console.log("getAllPostApprovalController");
+    try {
+        const result = await posts.find({ isValidate: false }).sort({_id:-1})
+        res.status(200).json(result)
+    } catch (err) {
+        res.status(401).json(err)
+    }
+}
+
+// get single user project by ID
+exports.getAdminSinglePostController = async (req, res) => {
+    console.log("getAdminSinglePostController");
+    try {
+      const { id } = req.params;
+      const result = await posts.findById(id);
+      if (!result) {
+        return res.status(404).json("Post not found");
+      }
+      res.status(200).json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Internal server error");
+    }
+}
+
+// approve post by id
+exports.approvePostController = async (req, res) => {
+    console.log("approvePostController");
+    try {
+        const { id } = req.params; // Use `id` instead of `_id`
+        const result = await posts.findByIdAndUpdate(
+            id,
+            { isValidate: true },
+            { new: true }
+        );
+        if (!result) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        res.status(200).json({ message: "Post approved successfully", post: result });
+    } catch (err) {
+        console.error("Error in approvePostController:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+//  delete post
+exports.adminDeletePostController = async (req,res) => {
+    console.log("adminDeletePostController");
+    const { id } = req.params;
+    console.log(id);
+    
+    try {
+        const removedPost = await posts.findByIdAndDelete(id)
+        res.status(200).json(removedPost)
+    } catch (err) {
+        res.status(401).json(err)
+    }
+}
+
+// Get all projects - auth user
+exports.adminGetAllPostController = async (req,res) => {
+    console.log("inside adminGetAllPostController");
+    try {
+        const result = await posts.find().sort({_id:-1})
+        console.log("All Posts:", result);
+        res.status(200).json(result)
+    } catch (err) {
+        res.status(401).json(err);
+    }
+}
