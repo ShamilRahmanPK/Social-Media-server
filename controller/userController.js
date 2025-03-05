@@ -12,7 +12,6 @@ exports.registerController = async (req,res)=>{
         const existingUser = await users.findOne({email})
         if (existingUser) {
             res.status(406).json("User Already exist.. Please Login")
-
         } else {
             const newUser = new users({
                 firstname,lastname,username,email,password,profilePic:"",userBio:"Feeling Good.."
